@@ -137,5 +137,23 @@
   <ItemGroup>
     <None Include="Resources\rock.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fireballSound.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\maleDeathSound.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ogreDeathSound.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pewSound.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rockSound.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\explodeSound.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

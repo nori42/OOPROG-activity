@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms;
 using Game.Classes;
+using System.Media;
 
 namespace Game
 {
@@ -135,11 +136,11 @@ namespace Game
 
         private void btnDefaultStart_Click(object sender, EventArgs e)
         {
-            player = new Player(180, 24, 10, 250, 48);
+            player = new Player(120, 28, 10, 200, 68);
 
             playerMaxMana = player.Mana;
 
-            enemy = new Enemy(300, 27, 6, 11);
+            enemy = new Enemy(210, 31, 6, 9);
 
             //Initialize the stats
             healthBarPlayer.Maximum = player.Health;
@@ -417,6 +418,12 @@ namespace Game
 
             damageTaken.Location = new Point(characterPlayer.Location.X + characterPlayer.Width + 15, characterPlayer.Location.Y);
 
+            SoundPlayer rockThrowSound = new SoundPlayer(Properties.Resources.rockSound);
+
+
+            rockThrowSound.Play();
+            WaitEvent(600);//Delay to match the sound on throw
+
             AnimateAttackV2(rockSprite, startLocationSprite, animateTime, projectileSpeed, MAXDISTANCE, false);
 
             dealBasicDamage(true);
@@ -428,6 +435,7 @@ namespace Game
                 skillButton.Enabled = false;
                 gameOverScene.Visible = true;
 
+                messageYouWin.Visible = false;
                 messageGameOver.Visible = true;
             }
 
@@ -461,6 +469,10 @@ namespace Game
 
             damageTaken.Location = new Point(characterEnemy.Location.X - 55, characterEnemy.Location.Y + 50);
 
+            SoundPlayer pewSound = new SoundPlayer(Properties.Resources.pewSound);
+
+            pewSound.Play();
+            WaitEvent(150);
             AnimateAttackV2(mageAttackSprite, startLocationSprite, animateTime, projectileSpeed, MAXDISTANCE, true);
             dealBasicDamage(false);
 
@@ -468,6 +480,7 @@ namespace Game
             if (enemy.Health <= 0)
             {
                 gameOverScene.Visible = true;
+                messageGameOver.Visible = false;
                 messageYouWin.Visible = true;
             }
             else
@@ -546,9 +559,19 @@ namespace Game
 
             damageTaken.Location = new Point(characterEnemy.Location.X - 55, characterEnemy.Location.Y + 50);
 
+
+            SoundPlayer fireBallSound = new SoundPlayer(Properties.Resources.fireballSound);
+            SoundPlayer explodeSound = new SoundPlayer(Properties.Resources.explodeSound);
+
+            fireBallSound.Play();
             skillChannel();
             AnimateAttackV2(fireballSprite, startLocationSprite, animateTime, projectileSpeed, MAXDISTANCE, true);
+
+            WaitEvent(animateTime - (animateTime - 100));
+
+            explodeSound.Play();
             dealMagicDamage();
+            WaitEvent(500);
 
             if (enemy.Health <= 0)
             {
