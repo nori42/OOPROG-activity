@@ -73,6 +73,15 @@ namespace Game.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
         /// </summary>
+        internal static System.IO.UnmanagedMemoryStream defaultDeathSound {
+            get {
+                return ResourceManager.GetStream("defaultDeathSound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        /// </summary>
         internal static System.IO.UnmanagedMemoryStream explodeSound {
             get {
                 return ResourceManager.GetStream("explodeSound", resourceCulture);

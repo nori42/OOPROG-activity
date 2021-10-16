@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,14 +29,11 @@ namespace Game.Classes
         public Player()
         {
         }
-        public override void BasicAttackLog()
+        public override void playDeathSound()
         {
+            SoundPlayer playerDeathSound = new SoundPlayer(Properties.Resources.maleDeathSound);
 
-        }
-
-        public void UseSkill()
-        {
-            Mana -= 60;
+            playerDeathSound.Play();
         }
     }
 }

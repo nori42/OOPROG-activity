@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Media;
 
 namespace Game.Classes
 {
-    abstract class Character
+     class Character
     {
         protected int health;
         protected int basicDamage;
@@ -26,8 +22,12 @@ namespace Game.Classes
             get { return armor; }
             set { armor = value; }
         }
-        public bool Turn { get; set; }
+        public virtual void playDeathSound()
+        {
+            //Play Soun
+            SoundPlayer defaultDeathSound = new SoundPlayer(Properties.Resources.defaultDeathSound);
 
-        public abstract void BasicAttackLog();
+            defaultDeathSound.Play();
+        }
     }
 }

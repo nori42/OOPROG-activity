@@ -141,9 +141,6 @@
     <None Include="Resources\fireballSound.wav" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\maleDeathSound.wav" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\ogreDeathSound.wav" />
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +151,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\explodeSound.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\defaultDeathSound.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\maleDeathSound.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

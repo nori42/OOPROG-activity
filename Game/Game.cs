@@ -433,13 +433,16 @@ namespace Game
             {
                 attackButton.Enabled = false;
                 skillButton.Enabled = false;
-                gameOverScene.Visible = true;
 
+                player.playDeathSound();
+                WaitEvent(2000);
+
+                gameOverScene.Visible = true;
                 messageYouWin.Visible = false;
                 messageGameOver.Visible = true;
             }
 
-            if (player.Mana < playerMaxMana)
+            if (player.Mana < playerMaxMana && player.Health >= 0)
             {
                 player.Mana += player.ManaRegen;
                 labelPlusMana.Text = "+" + player.ManaRegen.ToString() + " Mana";
@@ -479,6 +482,9 @@ namespace Game
             //if Enemy Health is 0 you win
             if (enemy.Health <= 0)
             {
+                enemy.playDeathSound();
+                WaitEvent(2000);
+
                 gameOverScene.Visible = true;
                 messageGameOver.Visible = false;
                 messageYouWin.Visible = true;
@@ -575,6 +581,8 @@ namespace Game
 
             if (enemy.Health <= 0)
             {
+                enemy.playDeathSound();
+                WaitEvent(2000);
                 gameOverScene.Visible = true;
                 messageYouWin.Visible = true;
             }

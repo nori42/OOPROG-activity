@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Media;
 
 namespace Game.Classes
 {
@@ -16,13 +12,14 @@ namespace Game.Classes
             armor = _armor;
             MagicResistance = _magicResistance;
         }
-
         public Enemy()
         {
         }
-        public override void BasicAttackLog()
+        public override void playDeathSound()
         {
+            SoundPlayer enemyDeathSound = new SoundPlayer(Properties.Resources.ogreDeathSound);
 
+            enemyDeathSound.Play();
         }
     }
 }
