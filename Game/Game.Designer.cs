@@ -80,7 +80,7 @@
             this.characterEnemy = new System.Windows.Forms.PictureBox();
             this.attackSpriteHolder = new System.Windows.Forms.PictureBox();
             this.characterPlayer = new System.Windows.Forms.PictureBox();
-            this.damageTaken = new System.Windows.Forms.Label();
+            this.labelDamageDealt = new System.Windows.Forms.Label();
             this.healthBarEnemy = new System.Windows.Forms.ProgressBar();
             this.healthBarPlayer = new System.Windows.Forms.ProgressBar();
             this.panel4.SuspendLayout();
@@ -119,7 +119,7 @@
             // pictureLabel
             // 
             this.pictureLabel.BackColor = System.Drawing.Color.Transparent;
-            this.pictureLabel.Image = Properties.Resources.Mage;
+            this.pictureLabel.Image = global::Game.Properties.Resources.Mage;
             this.pictureLabel.Location = new System.Drawing.Point(98, 48);
             this.pictureLabel.Name = "pictureLabel";
             this.pictureLabel.Size = new System.Drawing.Size(115, 93);
@@ -290,7 +290,7 @@
             this.gameBackground.Controls.Add(this.characterEnemy);
             this.gameBackground.Controls.Add(this.attackSpriteHolder);
             this.gameBackground.Controls.Add(this.characterPlayer);
-            this.gameBackground.Controls.Add(this.damageTaken);
+            this.gameBackground.Controls.Add(this.labelDamageDealt);
             this.gameBackground.Controls.Add(this.healthBarEnemy);
             this.gameBackground.Controls.Add(this.healthBarPlayer);
             this.gameBackground.Location = new System.Drawing.Point(2, 76);
@@ -322,7 +322,7 @@
             this.mainMenu.Controls.Add(this.txtBoxHealth);
             this.mainMenu.Controls.Add(this.label3);
             this.mainMenu.Controls.Add(this.label2);
-            this.mainMenu.Location = new System.Drawing.Point(239, 117);
+            this.mainMenu.Location = new System.Drawing.Point(240, 119);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Size = new System.Drawing.Size(358, 282);
             this.mainMenu.TabIndex = 10;
@@ -647,17 +647,17 @@
             this.characterPlayer.TabStop = false;
             this.characterPlayer.Click += new System.EventHandler(this.characterPlayer_Click);
             // 
-            // damageTaken
+            // labelDamageDealt
             // 
-            this.damageTaken.AutoSize = true;
-            this.damageTaken.BackColor = System.Drawing.Color.Transparent;
-            this.damageTaken.Font = new System.Drawing.Font("Segoe Print", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.damageTaken.Location = new System.Drawing.Point(565, 206);
-            this.damageTaken.Name = "damageTaken";
-            this.damageTaken.Size = new System.Drawing.Size(32, 37);
-            this.damageTaken.TabIndex = 7;
-            this.damageTaken.Text = "0";
-            this.damageTaken.Visible = false;
+            this.labelDamageDealt.AutoSize = true;
+            this.labelDamageDealt.BackColor = System.Drawing.Color.Transparent;
+            this.labelDamageDealt.Font = new System.Drawing.Font("Segoe Print", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelDamageDealt.Location = new System.Drawing.Point(190, 30);
+            this.labelDamageDealt.Name = "labelDamageDealt";
+            this.labelDamageDealt.Size = new System.Drawing.Size(32, 37);
+            this.labelDamageDealt.TabIndex = 7;
+            this.labelDamageDealt.Text = "0";
+            this.labelDamageDealt.Visible = false;
             // 
             // healthBarEnemy
             // 
@@ -686,6 +686,7 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.Name = "Game";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "The Mage";
             this.panel4.ResumeLayout(false);
             this.panel4.PerformLayout();
@@ -724,7 +725,7 @@
         private System.Windows.Forms.ToolTip basicAttackInfo;
         private System.Windows.Forms.ToolTip fireBallInfo;
         private System.Windows.Forms.ToolTip toolTipNotEnoughMana;
-        private System.Windows.Forms.Label damageTaken;
+        private System.Windows.Forms.Label labelDamageDealt;
         private System.Windows.Forms.PictureBox characterPlayer;
         private System.Windows.Forms.PictureBox attackSpriteHolder;
         private System.Windows.Forms.PictureBox characterEnemy;

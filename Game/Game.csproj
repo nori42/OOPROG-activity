@@ -49,6 +49,7 @@
     <Compile Include="Classes\Character.cs" />
     <Compile Include="Classes\Enemy.cs" />
     <Compile Include="Classes\Player.cs" />
+    <Compile Include="Classes\WaitEvent.cs" />
     <Compile Include="Game.cs">
       <SubType>Form</SubType>
     </Compile>

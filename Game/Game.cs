@@ -19,112 +19,8 @@ namespace Game
         Enemy enemy = new Enemy();
         public const int FRAME_PER_SEC = 30;
         int playerMaxMana;
-        Thread IdleAnimation2;
-        Thread IdleAnimation;
-        public void WaitEvent(int milliseconds)
-        {
-            var waitTimer = new System.Windows.Forms.Timer();
-            if (milliseconds == 0 || milliseconds < 0) return;
+        //Thread IdleAnimation;
 
-            // Console.WriteLine("start wait timer");
-            waitTimer.Interval = milliseconds;
-            waitTimer.Enabled = true;
-            waitTimer.Start();
-
-            waitTimer.Tick += (s, e) =>
-            {
-                waitTimer.Enabled = false;
-                waitTimer.Stop();
-                // Console.WriteLine("stop wait timer");
-            };
-
-            while (waitTimer.Enabled)
-            {
-                Application.DoEvents();
-            }
-        }
-
-        void UpdatePlayerSize(int h)
-        {
-            characterPlayer.Size = new Size(characterPlayer.Width, characterPlayer.Height - h);
-            characterPlayer.Location = new Point(characterPlayer.Location.X, characterPlayer.Location.Y + h);
-        }
-        void UpdateEnemySize(int h)
-        {
-            characterEnemy.Size = new Size(characterEnemy.Width, characterEnemy.Height - h);
-            characterEnemy.Location = new Point(characterEnemy.Location.X, characterEnemy.Location.Y + h);
-        }
-
-        delegate void UpdateSizeDelagate(int h);
-        void StartIdleCharacterAnimation()
-        {
-            //Seperating the animation thread from the main thread for background animation
-            IdleAnimation = new Thread(() => {
-                int frame = 1;
-                int maxFrame = 6; // Count frames of the animation
-
-                while (true)
-                {
-                    if (frame > maxFrame)
-                    {
-                        frame = 1;
-                    }
-
-                    //Change the size every 200ms
-
-                    if (IsHandleCreated)
-                    {
-                        if (frame <= 3)
-                        {
-                            characterPlayer.BeginInvoke(new UpdateSizeDelagate(UpdatePlayerSize), 2);
-                            WaitEvent(200);
-                        }
-                        else
-                        {
-                            characterPlayer.BeginInvoke(new UpdateSizeDelagate(UpdatePlayerSize), -2);
-                            WaitEvent(200);
-                        }
-                        frame++;
-                    }
-                }
-            });
-
-            IdleAnimation2 = new Thread(() => {
-                int frame = 1;
-                int maxFrame = 8; // Count frames of the animation
-
-                while (true)
-                {
-                    if (frame > maxFrame)
-                    {
-                        frame = 1;
-                    }
-
-                    if (IsHandleCreated)
-                    {
-                        //Change the size every 200ms
-                        if (frame <= 4)
-                        {
-                            characterEnemy.BeginInvoke(new UpdateSizeDelagate(UpdateEnemySize), 2);
-                            WaitEvent(200);
-                        }
-                        else
-                        {
-                            characterEnemy.BeginInvoke(new UpdateSizeDelagate(UpdateEnemySize), -2);
-                            WaitEvent(200);
-                        }
-                    }
-
-                    frame++;
-                }
-            });
-
-            IdleAnimation2.IsBackground = true;
-            IdleAnimation.IsBackground = true;
-            IdleAnimation2.Start();
-            IdleAnimation.Start();
-
-        }
 
         public Game()
         {
@@ -136,11 +32,11 @@ namespace Game
 
         private void btnDefaultStart_Click(object sender, EventArgs e)
         {
-            player = new Player(120, 28, 10, 200, 68);
+            player = new Player(120, 28, 10, 200, 68,characterPlayer);
 
             playerMaxMana = player.Mana;
 
-            enemy = new Enemy(210, 31, 6, 9);
+            enemy = new Enemy(210, 31, 6, 9,characterEnemy);
 
             //Initialize the stats
             healthBarPlayer.Maximum = player.Health;
@@ -156,8 +52,25 @@ namespace Game
 
 
             //Info on attacks and skill
-            string basicDamageInfo = "Deals " + player.BasicDamage + " - " + (player.BasicDamage - 5) + " damage";
-            string skillDamageInfo = "Deals " + player.SkillDamage + " - " + (player.SkillDamage - 5) + " magic damage and cost 80 mana in use";
+            string basicDamageInfo;
+            string skillDamageInfo;
+            if (player.BasicDamage < 5)
+            {
+                basicDamageInfo = "Deals " + player.BasicDamage + " - " + 1 + " damage";
+            }
+            else
+            {
+                basicDamageInfo = "Deals " + player.BasicDamage + " - " + (player.BasicDamage - 5) + " damage";
+            }
+
+            if (player.SkillDamage < 5)
+            {
+                skillDamageInfo = "Deals " + player.SkillDamage + " - " + 1 + " damage";
+            }
+            else
+            {
+                skillDamageInfo = "Deals " + player.SkillDamage + " - " + (player.SkillDamage - 5) + " damage";
+            }
 
             basicAttackInfo.SetToolTip(attackButton, basicDamageInfo);
             fireBallInfo.SetToolTip(skillButton, skillDamageInfo);
@@ -165,7 +78,8 @@ namespace Game
             skillButton.Enabled = true;
             attackButton.Enabled = true;
             mainMenu.Visible = false;
-            StartIdleCharacterAnimation();
+            enemy.StartIdleAnimation();
+            player.StartIdleAnimation();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -182,8 +96,8 @@ namespace Game
                 int enemyDamage = Convert.ToInt32(txtBoxDamage2.Text);
                 int enemyArmor = Convert.ToInt32(txtBoxArmor2.Text);
                 int enemyMagicResistance = Convert.ToInt32(txtBoxMagicResistance.Text);
-                player = new Player(playerHealth, playerDamage, playerArmor, playerMana, playerSkillDamage);
-                enemy = new Enemy(enemyHealth, enemyDamage, enemyArmor, enemyMagicResistance);
+                player = new Player(playerHealth, playerDamage, playerArmor, playerMana, playerSkillDamage,characterPlayer);
+                enemy = new Enemy(enemyHealth, enemyDamage, enemyArmor, enemyMagicResistance,characterEnemy);
             }
             catch
             {
@@ -211,8 +125,27 @@ namespace Game
 
 
             //Info on attacks and skill
-            string basicDamageInfo = "Deals " + player.BasicDamage + " - " + (player.BasicDamage - 5) + " damage";
-            string skillDamageInfo = "Deals " + player.SkillDamage + " - " + (player.SkillDamage - 5) + " magic damage and cost 80 mana in use";
+            string basicDamageInfo;
+            string skillDamageInfo;
+            if (player.BasicDamage < 5)
+            {
+                basicDamageInfo = "Deals " + player.BasicDamage + " - " + 1 + " damage";
+            }
+            else
+            {
+                basicDamageInfo = "Deals " + player.BasicDamage + " - " + (player.BasicDamage - 5) + " damage";
+            }
+
+            if (player.SkillDamage < 5)
+            {
+                skillDamageInfo = "Deals " + player.SkillDamage + " - " + 1 + " damage";
+            }
+            else
+            {
+                skillDamageInfo = "Deals " + player.SkillDamage + " - " + (player.SkillDamage - 5) + " damage";
+            }
+
+
 
             basicAttackInfo.SetToolTip(attackButton, basicDamageInfo);
             fireBallInfo.SetToolTip(skillButton, skillDamageInfo);
@@ -220,238 +153,9 @@ namespace Game
             skillButton.Enabled = true;
             attackButton.Enabled = true;
             mainMenu.Visible = false;
-            StartIdleCharacterAnimation();
 
-        }
-
-        //Moves the projectile in the screem
-        void AnimateAttackV2(Bitmap sprite, Point location, int animationDuration, int projectileSpeed, int distanceTarget, bool isRight)
-        {
-            int miliSecPerFrame = animationDuration / FRAME_PER_SEC;
-            //int spriteFrame = 0;
-            int distanceT = 0;
-
-            attackSpriteHolder.Location = location;
-            attackSpriteHolder.Image = sprite;
-            attackSpriteHolder.Visible = true;
-
-            while (distanceT <= distanceTarget)
-            {
-                //spriteFrame++;
-
-                //if (spriteFrame > sprite.Length - 1)
-                //{
-                //    spriteFrame = 0;
-                //}
-
-                if (isRight)
-                {
-                    attackSpriteHolder.Location = new Point(attackSpriteHolder.Location.X + projectileSpeed, attackSpriteHolder.Location.Y);
-                }
-                else
-                {
-                    attackSpriteHolder.Location = new Point(attackSpriteHolder.Location.X - projectileSpeed, attackSpriteHolder.Location.Y);
-                }
-
-                //attackSpriteHolder.Image = sprite[spriteFrame];
-
-                distanceT += projectileSpeed;
-
-                WaitEvent(miliSecPerFrame);
-            }
-
-            attackSpriteHolder.Visible = false;
-        }
-
-        void dealMagicDamage()
-        {
-            Random randomNum = new Random();
-            int damageDealt = randomNum.Next(player.SkillDamage - 5, player.SkillDamage);
-            damageTaken.ForeColor = Color.Blue;
-
-            damageDealt -= enemy.MagicResistance;
-
-            logActions.Items.Add("Player uses fireball and deals " + damageDealt + " magic damage.");
-
-            damageTaken.Text = damageDealt.ToString();
-            damageTaken.Visible = true;
-
-            WaitEvent(400);
-
-            damageTaken.Visible = false;
-            enemy.Health -= damageDealt;
-
-            if (enemy.Health < 0)
-            {
-                enemy.Health = 0;
-            }
-
-            healthBarEnemy.Value = enemy.Health;
-        }
-        void dealBasicDamage(bool isPlayerHealth)
-        {
-            Random randomNum = new Random();
-            int criticalChance = 40;
-            int missChance = 20;
-
-            if (randomNum.Next(1, 100) <= missChance)
-            {
-
-                damageTaken.Text = "Miss";
-                damageTaken.ForeColor = Color.DarkGray;
-                damageTaken.Visible = true;
-                if (isPlayerHealth)
-                {
-                    logActions.Items.Add("Enemy uses basic attack and missed");
-                }
-                else
-                {
-                    logActions.Items.Add("Player uses basic attack and missed");
-                }
-                WaitEvent(400);
-                damageTaken.Visible = false;
-                return;
-            }
-
-            bool isCritical()
-            {
-                if (randomNum.Next(1, 100) <= criticalChance)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-            if (isPlayerHealth)
-            {
-                int damageDealt = randomNum.Next(enemy.BasicDamage - 5, enemy.BasicDamage) - player.Armor;
-
-                if (isCritical())
-                {
-                    damageTaken.ForeColor = Color.Red;
-                    damageDealt *= 2;
-                    logActions.Items.Add("Enemy uses basic attack and deals " + damageDealt + " critical damage.");
-                }
-                else
-                {
-                    damageTaken.ForeColor = Color.DarkOrange;
-                    logActions.Items.Add("Enemy uses basic attack and deals " + damageDealt + " damage.");
-                }
-
-                damageTaken.Text = damageDealt.ToString();
-                damageTaken.Visible = true;
-
-                WaitEvent(400);
-
-                damageTaken.Visible = false;
-                player.Health -= damageDealt;
-
-                ;
-                if (player.Health < 0)
-                {
-                    player.Health = 0;
-                }
-                valueHealth.Text = player.Health.ToString();
-
-                if (player.Health > healthBarPlayer.Value)
-                {
-                    player.Health = healthBarPlayer.Value;
-                }
-
-                healthBarPlayer.Value = player.Health;
-            }
-            else
-            {
-                int damageDealt = randomNum.Next(player.BasicDamage - 5, player.BasicDamage) - enemy.Armor;
-
-                if (isCritical())
-                {
-                    damageTaken.ForeColor = Color.Red;
-                    damageDealt *= 2;
-                    logActions.Items.Add("Player uses basic attack and deals " + damageDealt + " critical damage.");
-                }
-                else
-                {
-                    damageTaken.ForeColor = Color.DarkOrange;
-                    logActions.Items.Add("Player uses basic attack and deals " + damageDealt + " damage.");
-                }
-
-                damageTaken.Text = damageDealt.ToString();
-                damageTaken.Visible = true;
-
-                WaitEvent(400);
-
-                damageTaken.Visible = false;
-
-                enemy.Health -= damageDealt;
-
-
-                if (enemy.Health < 0)
-                {
-                    enemy.Health = 0;
-                }
-
-
-                if (enemy.Health > healthBarEnemy.Value)
-                {
-                    enemy.Health = healthBarEnemy.Value;
-                }
-                healthBarEnemy.Value = enemy.Health;
-
-            }
-        }
-        void EnemyAttack()
-        {
-            int MAXDISTANCE = (characterEnemy.Location.X - 2) - (characterPlayer.Location.X + characterPlayer.Width) - attackSpriteHolder.Width;
-
-            int startLocX = characterEnemy.Location.X - 90;
-            int startLocY = characterEnemy.Location.Y + 50;
-            Point startLocationSprite = new Point(startLocX, startLocY);
-
-            Bitmap rockSprite = Properties.Resources.rock;
-
-            int projectileSpeed = 10;
-            int animateTime = (MAXDISTANCE / projectileSpeed * FRAME_PER_SEC);
-
-            damageTaken.Location = new Point(characterPlayer.Location.X + characterPlayer.Width + 15, characterPlayer.Location.Y);
-
-            SoundPlayer rockThrowSound = new SoundPlayer(Properties.Resources.rockSound);
-
-
-            rockThrowSound.Play();
-            WaitEvent(600);//Delay to match the sound on throw
-
-            AnimateAttackV2(rockSprite, startLocationSprite, animateTime, projectileSpeed, MAXDISTANCE, false);
-
-            dealBasicDamage(true);
-
-            //If player health is 0 show game over
-            if (player.Health <= 0)
-            {
-                attackButton.Enabled = false;
-                skillButton.Enabled = false;
-
-                player.playDeathSound();
-                WaitEvent(2000);
-
-                gameOverScene.Visible = true;
-                messageYouWin.Visible = false;
-                messageGameOver.Visible = true;
-            }
-
-            if (player.Mana < playerMaxMana && player.Health >= 0)
-            {
-                player.Mana += player.ManaRegen;
-                labelPlusMana.Text = "+" + player.ManaRegen.ToString() + " Mana";
-
-                labelPlusMana.Visible = true;
-                valueChangeable.Text = player.Mana.ToString();
-                WaitEvent(800);
-                labelPlusMana.Visible = false;
-            }
+            enemy.StartIdleAnimation();
+            player.StartIdleAnimation();
         }
 
         void attackButton_Click(object sender, EventArgs e)
@@ -459,90 +163,61 @@ namespace Game
             attackButton.Enabled = false;
             skillButton.Enabled = false;
 
-            int MAXDISTANCE = (characterEnemy.Location.X - 2) - (characterPlayer.Location.X + characterPlayer.Width) - attackSpriteHolder.Width;
+            player.useBasicAttack(characterEnemy,attackSpriteHolder,enemy,labelDamageDealt,logActions);
 
-            int startLocX = characterPlayer.Location.X + characterPlayer.Width;
-            int startLocY = characterPlayer.Location.Y + 5;
-            Point startLocationSprite = new Point(startLocX, startLocY);
+            healthBarEnemy.Value = enemy.Health;
 
-            Bitmap mageAttackSprite = Properties.Resources.fireball_4;
+            labelDamageDealt.Location = new Point(characterEnemy.Location.X - 50, characterEnemy.Location.Y + 50);
+            labelDamageDealt.Visible = true;
 
-            int projectileSpeed = 15;
-            int animateTime = (MAXDISTANCE / projectileSpeed * FRAME_PER_SEC);
+            WaitEvent.Wait(600);
+            labelDamageDealt.Visible = false;
 
-            damageTaken.Location = new Point(characterEnemy.Location.X - 55, characterEnemy.Location.Y + 50);
+            //Enemy Turn
 
-            SoundPlayer pewSound = new SoundPlayer(Properties.Resources.pewSound);
-
-            pewSound.Play();
-            WaitEvent(150);
-            AnimateAttackV2(mageAttackSprite, startLocationSprite, animateTime, projectileSpeed, MAXDISTANCE, true);
-            dealBasicDamage(false);
-
-            //if Enemy Health is 0 you win
             if (enemy.Health <= 0)
             {
                 enemy.playDeathSound();
-                WaitEvent(2000);
-
+                WaitEvent.Wait(2000);
                 gameOverScene.Visible = true;
-                messageGameOver.Visible = false;
                 messageYouWin.Visible = true;
+
+                return;
+            }
+
+            //Enemy Turn
+            enemy.useBasicAttack(characterPlayer, characterEnemy, attackSpriteHolder, player, labelDamageDealt, logActions);
+            healthBarPlayer.Value = player.Health;
+            valueHealth.Text = player.Health.ToString();
+
+            labelDamageDealt.Location = new Point(characterPlayer.Location.X + characterPlayer.Width + 5, characterEnemy.Location.Y + 20);
+            labelDamageDealt.Visible = true;
+
+            WaitEvent.Wait(600);
+            labelDamageDealt.Visible = false;
+
+
+            if (player.Health <= 0)
+            {
+                player.playDeathSound();
+                WaitEvent.Wait(2000);
+                gameOverScene.Visible = true;
+                messageGameOver.Visible = true;
             }
             else
             {
-                EnemyAttack();
                 attackButton.Enabled = true;
                 skillButton.Enabled = true;
             }
         }
 
-        void skillChannel()
-        {
-            int animationDuration = 1200;
-            int miliSecPerFrame;
-            int startLocX = characterPlayer.Location.X + characterPlayer.Width;
-            int startLocY = characterPlayer.Location.Y + 5;
-            Point startLocationSprite = new Point(startLocX, startLocY);
-            int frameSprite = 0;
-            int timeElapse = 0;
-
-            Bitmap[] fireBallChannelSprite =
-            {
-                Properties.Resources.fireball_1,
-                Properties.Resources.fireball_2,
-                Properties.Resources.fireball_3,
-                Properties.Resources.fireball_4,
-                Properties.Resources.fireball_5,
-                Properties.Resources.fireball_6,
-                Properties.Resources.fireball_7,
-                Properties.Resources.fireball_8
-            };
-
-            attackSpriteHolder.Location = startLocationSprite;
-            attackSpriteHolder.Visible = true;
-
-            miliSecPerFrame = animationDuration / fireBallChannelSprite.Length;
-
-            while (timeElapse <= animationDuration)
-            {
-                if (frameSprite > fireBallChannelSprite.Length - 1)
-                {
-                    break;
-                }
-
-                attackSpriteHolder.Image = fireBallChannelSprite[frameSprite];
-                frameSprite++;
-                WaitEvent(miliSecPerFrame);
-            }
-        }
-
         private void skillButton_Click(object sender, EventArgs e)
         {
+            
             if (player.Mana < player.SkillManaCost)
             {
                 notEnoughMana.Visible = true;
-                WaitEvent(1400);
+                WaitEvent.Wait(1400);
                 notEnoughMana.Visible = false;
                 return;
             }
@@ -550,45 +225,63 @@ namespace Game
             player.Mana -= player.SkillManaCost;
             valueChangeable.Text = player.Mana.ToString();
 
+
             attackButton.Enabled = false;
             skillButton.Enabled = false;
 
-            int MAXDISTANCE = (characterEnemy.Location.X - 2) - (characterPlayer.Location.X + characterPlayer.Width) - attackSpriteHolder.Width;
-            int startLocX = characterPlayer.Location.X + characterPlayer.Width;
-            int startLocY = characterPlayer.Location.Y + 5;
-            Point startLocationSprite = new Point(startLocX, startLocY);
-
-            Bitmap fireballSprite = Properties.Resources.fireBallMoving;
-
-            int projectileSpeed = 10;
-            int animateTime = (MAXDISTANCE / projectileSpeed * FRAME_PER_SEC);
-
-            damageTaken.Location = new Point(characterEnemy.Location.X - 55, characterEnemy.Location.Y + 50);
+            player.UseSkill(characterEnemy, attackSpriteHolder,labelDamageDealt, enemy,logActions);
+            healthBarEnemy.Value = enemy.Health;
 
 
-            SoundPlayer fireBallSound = new SoundPlayer(Properties.Resources.fireballSound);
-            SoundPlayer explodeSound = new SoundPlayer(Properties.Resources.explodeSound);
-
-            fireBallSound.Play();
-            skillChannel();
-            AnimateAttackV2(fireballSprite, startLocationSprite, animateTime, projectileSpeed, MAXDISTANCE, true);
-
-            WaitEvent(animateTime - (animateTime - 100));
-
-            explodeSound.Play();
-            dealMagicDamage();
-            WaitEvent(500);
+            labelDamageDealt.Location = new Point(characterEnemy.Location.X - 50, characterEnemy.Location.Y + 50);
+            labelDamageDealt.Visible = true;
+    
+            WaitEvent.Wait(600);
+            labelDamageDealt.Visible = false;
 
             if (enemy.Health <= 0)
             {
                 enemy.playDeathSound();
-                WaitEvent(2000);
+                WaitEvent.Wait(2000);
                 gameOverScene.Visible = true;
                 messageYouWin.Visible = true;
+
+                return;
+            }
+
+            //Enemy Turn
+            enemy.useBasicAttack(characterPlayer, characterEnemy, attackSpriteHolder, player, labelDamageDealt, logActions);
+            healthBarPlayer.Value = player.Health;
+            valueHealth.Text = player.Health.ToString();
+
+            labelDamageDealt.Location = new Point(characterPlayer.Location.X + characterPlayer.Width + 5, characterEnemy.Location.Y + 20);
+            labelDamageDealt.Visible = true;
+
+            WaitEvent.Wait(600);
+            labelDamageDealt.Visible = false;
+
+            //Regen Mana Label
+
+            if (player.Mana < playerMaxMana && player.Health >= 0)
+            {
+                labelPlusMana.Text = "+" + player.ManaRegen.ToString() + " Mana";
+
+                labelPlusMana.Visible = true;
+                valueChangeable.Text = player.Mana.ToString();
+                WaitEvent.Wait(800);
+                labelPlusMana.Visible = false;
+            }
+
+            //Condition game over
+            if (player.Health <= 0)
+            {
+                player.playDeathSound();
+                WaitEvent.Wait(2000);
+                gameOverScene.Visible = true;
+                messageGameOver.Visible = true;
             }
             else
             {
-                EnemyAttack();
                 attackButton.Enabled = true;
                 skillButton.Enabled = true;
             }
@@ -620,14 +313,18 @@ namespace Game
             valueHealth.Text = enemy.Health.ToString();
             valueBasicDamage.Text = enemy.BasicDamage.ToString();
             valueArmor.Text = enemy.Armor.ToString();
-            valueChangeable2.Text = enemy.MagicResistance.ToString();
+            //valueChangeable2.Text = enemy.MagicResistance.ToString();
             labelChangeable2.Text = ":Magic Resistance";
+            valueChangeable2.Text = enemy.MagicResistance.ToString();
 
         }
 
         private void btnRestart_Click(object sender, EventArgs e)
         {
             gameOverScene.Visible = false;
+            messageGameOver.Visible = false;
+            messageYouWin.Visible = false;
+
             mainMenu.Visible = true;
 
             logActions.Items.Clear();
@@ -635,8 +332,14 @@ namespace Game
             healthBarEnemy.Value = 0;
             healthBarPlayer.Value = 0;
 
-            IdleAnimation.Abort();
-            IdleAnimation2.Abort();
+            //IdleAnimation.Abort();
+            player.IdleAnimation.Abort();
+            enemy.IdleAnimation.Abort();
+        }
+
+        private void log_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
