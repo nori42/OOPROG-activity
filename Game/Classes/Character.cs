@@ -24,6 +24,9 @@ namespace Game.Classes
         public int Armor {
             get { return armor; }
         }
+
+        
+        //Polymorph
         public virtual void playDeathSound()
         {
             SoundPlayer defaultDeathSound = new SoundPlayer();
